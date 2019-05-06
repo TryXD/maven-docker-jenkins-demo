@@ -42,7 +42,7 @@ pipeline {
                         echo '[ INFO ] [ Deploy ] ========== container not exist ! =========='
                     }
 
-                    sh "sudo docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
+                    sh "docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
                         -e JAVA_OPTIONS='${JAVA_OPTIONS}' \
                         -e SERVICE_NAME=${SERVICE_NAME} \
                         ${SERVICE_IMAGE_NAME}"
