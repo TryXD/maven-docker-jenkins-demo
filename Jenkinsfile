@@ -61,3 +61,7 @@ pipeline {
         }
     }
 }
+// add jenkis user to docker group to avoid error:
+// Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock...
+// sudo usermod -a -G docker jenkins
+// sudo service jenkins restart

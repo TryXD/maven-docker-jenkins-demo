@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# 因为还没有弄jenkins 所以是参考jenkins抽出来测试的
 mvn clean package
 
 SERVICE_NAME="maven-docker-jenkins-demo"
