@@ -23,22 +23,21 @@ pipeline {
         }
 
         stage('Build image') {
-            agent any
             steps {
                 script {
                     echo "[ INFO ] [ Build image ] ========== start build docker image =========="
-                    sh "sudo docker build -f ${DOCKER_FILE_PATH} --build-arg JAR_PATH=${JAR_PATH} -t ${SERVICE_IMAGE_NAME} ."
+                    sh "docker -v"
+                    sh "docker build -f ${DOCKER_FILE_PATH} --build-arg JAR_PATH=${JAR_PATH} -t ${SERVICE_IMAGE_NAME} ."
                 }
             }
         }
 
         stage('Deploy') {
-            agent any
             steps {
                 echo '[ INFO ] [ Deploy ] ========== start deploy =========='
                 script{
                     try {
-                        sh "sudo docker rmi -f ${SERVICE_IMAGE_NAME}"
+                        sh "docker rmi -f ${SERVICE_IMAGE_NAME}"
                     } catch (err) {
                         echo '[ INFO ] [ Deploy ] ========== container not exist ! =========='
                     }
