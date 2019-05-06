@@ -26,7 +26,11 @@ pipeline {
             steps {
                 script {
                     echo "[ INFO ] [ Build image ] ========== start build docker image =========="
-                    sh "docker -v"
+                    try {
+                        sh "docker rmi -f ${SERVICE_IMAGE_NAME}"
+                    } catch (err) {
+                        echo '[ INFO ] [ Deploy ] ========== image not exist ! =========='
+                    }
                     sh "docker build -f ${DOCKER_FILE_PATH} --build-arg JAR_PATH=${JAR_PATH} -t ${SERVICE_IMAGE_NAME} ."
                 }
             }
@@ -37,9 +41,14 @@ pipeline {
                 echo '[ INFO ] [ Deploy ] ========== start deploy =========='
                 script{
                     try {
-                        sh "docker rmi -f ${SERVICE_IMAGE_NAME}"
+                        sh "docker stop ${SERVICE_NAME}"
                     } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== container not exist ! =========='
+                        echo '[ INFO ] [ Deploy ] ========== containner stopped or not exist ! =========='
+                    }
+                    try {
+                        sh "docker rm ${SERVICE_NAME}"
+                    } catch (err) {
+                        echo '[ INFO ] [ Deploy ] ========== containner not exist ! =========='
                     }
 
                     sh "docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
