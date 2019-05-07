@@ -27,6 +27,16 @@ pipeline {
                 script {
                     echo "[ INFO ] [ Build image ] ========== start build docker image =========="
                     try {
+                        sh "docker stop ${SERVICE_NAME}"
+                    } catch (err) {
+                        echo '[ INFO ] [ Deploy ] ========== containner stopped or not exist ! =========='
+                    }
+                    try {
+                        sh "docker rm ${SERVICE_NAME}"
+                    } catch (err) {
+                        echo '[ INFO ] [ Deploy ] ========== containner not exist ! =========='
+                    }
+                    try {
                         sh "docker rmi -f ${SERVICE_IMAGE_NAME}"
                     } catch (err) {
                         echo '[ INFO ] [ Deploy ] ========== image not exist ! =========='
@@ -40,16 +50,6 @@ pipeline {
             steps {
                 echo '[ INFO ] [ Deploy ] ========== start deploy =========='
                 script{
-                    try {
-                        sh "docker stop ${SERVICE_NAME}"
-                    } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== containner stopped or not exist ! =========='
-                    }
-                    try {
-                        sh "docker rm ${SERVICE_NAME}"
-                    } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== containner not exist ! =========='
-                    }
 
                     sh "docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
                         -e JAVA_OPTIONS='${JAVA_OPTIONS}' \
