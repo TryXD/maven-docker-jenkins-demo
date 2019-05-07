@@ -15,7 +15,19 @@ pipeline {
             }
         }
 
+        // stage('Build artifact') {
+        //     steps {
+        //         echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
+        //         sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
+        //     }
+        // }
+
         stage('Build artifact') {
+            agent {
+                docker {
+                    image 'maven:3-jdk-8'
+                }
+            }
             steps {
                 echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
                 sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
