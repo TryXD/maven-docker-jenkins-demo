@@ -35,6 +35,7 @@ pipeline {
         }
 
         stage('Build image') {
+            agent any
             steps {
                 script {
                     echo "[ INFO ] [ Build image ] ========== start build docker image =========="
