@@ -15,7 +15,20 @@ pipeline {
             }
         }
 
+        // 使用本机maven build
+        // stage('Build artifact') {
+        //     steps {
+        //         echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
+        //         sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
+        //     }
+        // }
+        // or 使用docker maven容器build
         stage('Build artifact') {
+            agent {
+                docker {
+                    image 'maven:3-jdk-8'
+                }
+            }
             steps {
                 echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
                 sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
@@ -23,6 +36,7 @@ pipeline {
         }
 
         stage('Build image') {
+            agent any
             steps {
                 script {
                     echo "[ INFO ] [ Build image ] ========== start build docker image =========="
