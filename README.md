@@ -2,4 +2,4 @@
 
 - Jenkinsfile：maven build项目、构建镜像、启动容器
 
-- 测试环境centos安装：java、jenkins、maven、docker、git
+- 测试环境centos安装：java、jenkins、docker、maven(如果在maven-docker里构建就不需要)
