@@ -27,7 +27,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3-jdk-8'
-                    args  '-v /root/dev/maven-repos:/root/.m2'
+                    args  '-v /Users/TryXD/docker/jenkins-m2-repo:/root/.m2'
                 }
             }
             steps {
