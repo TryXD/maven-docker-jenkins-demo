@@ -12,6 +12,7 @@ pipeline {
             steps {
                 echo "[ INFO ] [ Init ] ========== initialize build parameter =========="
                 echo "[ INFO ] [ Init ] SERVICE_NAME is ${SERVICE_NAME} "
+                sh "env"
             }
         }
 
