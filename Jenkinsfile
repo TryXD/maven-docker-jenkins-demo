@@ -4,7 +4,6 @@ def JAR_PATH="./target/demo-0.0.1-SNAPSHOT.jar"
 def DOCKER_FILE_PATH="./docker/Dockerfile"
 def JAVA_OPTIONS="-Xms256m -Xmx512m"
 
-def BRANCH=""
 
 pipeline {
     agent any
@@ -22,9 +21,10 @@ pipeline {
                     if ( env.BRANCH_NAME == 'master' ){
                          sh "./test.sh"
                     }else{
-                        BRANCH = "${env.BRANCH_NAME}".split('#')
-                        echo "${BRANCH}"
-                        sh "./issue.sh ${BRANCH}"
+                        def branchNames = "${env.BRANCH_NAME}".split('#')
+                        def branchName = branchNames[1]
+                        echo "${branchName}"
+                        sh "./issue.sh ${branchName}"
                     }
                 }
             }
