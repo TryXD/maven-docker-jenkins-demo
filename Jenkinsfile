@@ -4,6 +4,8 @@ def JAR_PATH="./target/demo-0.0.1-SNAPSHOT.jar"
 def DOCKER_FILE_PATH="./docker/Dockerfile"
 def JAVA_OPTIONS="-Xms256m -Xmx512m"
 
+def BRANCH=""
+
 pipeline {
     agent any
 
@@ -13,15 +15,16 @@ pipeline {
                 echo "[ INFO ] [ Init ] ========== initialize build parameter =========="
                 echo "[ INFO ] [ Init ] SERVICE_NAME is ${SERVICE_NAME} "
                 sh "env"
-
+                // test run sh file
                 sh "chmod 777 ./test.sh"
                 sh "chmod 777 ./issue.sh"
                 script {
                     if ( env.BRANCH_NAME == 'master' ){
                          sh "./test.sh"
                     }else{
-                        echo "${env.BRANCH_NAME}.split('#')"
-                        sh "./issue.sh ${env.BRANCH_NAME}.split('#')"
+                        BRANCH = ${env.BRANCH_NAME}.split('#')
+                        echo "${BRANCH}"
+                        sh "./issue.sh ${BRANCH}"
                     }
                 }
             }
