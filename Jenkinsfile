@@ -19,7 +19,7 @@ pipeline {
                 script {
                     if ( env.BRANCH_NAME == 'master' ){
                          sh "./test.sh"
-                    }esle{
+                    }else{
                         sh "./issue.sh ${env.BRANCH_NAME}".split('#')"
                     }
                 }
