@@ -22,7 +22,7 @@ pipeline {
                     if ( env.BRANCH_NAME == 'master' ){
                          sh "./test.sh"
                     }else{
-                        BRANCH = ${env.BRANCH_NAME}.split('#')
+                        BRANCH = "${env.BRANCH_NAME}".split('#')
                         echo "${BRANCH}"
                         sh "./issue.sh ${BRANCH}"
                     }
