@@ -16,11 +16,12 @@ pipeline {
 
                 sh "chmod 777 ./test.sh"
                 sh "chmod 777 ./issue.sh"
-
-                if ( env.BRANCH_NAME == 'master' ){
-                     sh "./test.sh"
-                }esle{
-                    sh "./issue.sh ${env.BRANCH_NAME}".split('#')"
+                script {
+                    if ( env.BRANCH_NAME == 'master' ){
+                         sh "./test.sh"
+                    }esle{
+                        sh "./issue.sh ${env.BRANCH_NAME}".split('#')"
+                    }
                 }
             }
         }
