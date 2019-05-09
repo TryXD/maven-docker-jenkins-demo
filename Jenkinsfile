@@ -13,8 +13,15 @@ pipeline {
                 echo "[ INFO ] [ Init ] ========== initialize build parameter =========="
                 echo "[ INFO ] [ Init ] SERVICE_NAME is ${SERVICE_NAME} "
                 sh "env"
+
                 sh "chmod 777 ./test.sh"
-                sh "./test.sh"
+                sh "chmod 777 ./issue.sh"
+
+                if ( env.BRANCH_NAME == 'master' ){
+                     sh "./test.sh"
+                }esle{
+                    sh "./issue.sh ${env.BRANCH_NAME}".split('#')"
+                }
             }
         }
 
