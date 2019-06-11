@@ -25,7 +25,7 @@ pipeline {
 
         stage('Build image') {
             steps {
-                sh "mvn clean package -U jib:dockerBuild -Dmaven.test.skip=true -Ddocker-image.version=${DOCKER_TAG}"
+                sh "mvn clean package -U jib:dockerBuild -Dmaven.test.skip=true -DsendCredentialsOverHttp=true -Ddocker-image.version=${DOCKER_TAG}"
             }
         }
 
