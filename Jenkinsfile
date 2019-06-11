@@ -1,92 +1,43 @@
 def SERVICE_NAME="maven-docker-jenkins-demo"
-def SERVICE_IMAGE_NAME="maven-docker-jenkins-demo-img"
-def JAR_PATH="./target/demo-0.0.1-SNAPSHOT.jar"
-def DOCKER_FILE_PATH="./docker/Dockerfile"
+def SERVICE_IMAGE_NAME="maven-docker-jenkins-demo"
 def JAVA_OPTIONS="-Xms256m -Xmx512m"
 
+def DOCKER_TAG="latest";
 
 pipeline {
     agent any
 
+    parameters {
+        booleanParam(name: 'RELEASE', defaultValue: false , description: 'UAT,PROD勾选')
+    }
+
     stages {
-        stage('Init build parameter') {
+        stage('DEFINE DOCKER TAG NAME') {
             steps {
-                echo "[ INFO ] [ Init ] ========== initialize build parameter =========="
-                echo "[ INFO ] [ Init ] SERVICE_NAME is ${SERVICE_NAME} "
-                sh "env"
-                // test run sh file
-                sh "chmod 777 ./test.sh"
-                sh "chmod 777 ./issue.sh"
                 script {
-                    if ( env.BRANCH_NAME == 'master' ){
-                         sh "./test.sh"
-                    }else{
-                        def branchNames = "${env.BRANCH_NAME}".split('#')
-                        def branchName = branchNames[1]
-                        echo "${branchName}"
-                        sh "./issue.sh ${branchName}"
+                    if (params.RELEASE) {
+                        def now = new Date()
+                        DOCKER_TAG = now.format("YYYYMMdd")
                     }
                 }
-            }
-        }
-
-        // 使用本机maven build
-        // stage('Build artifact') {
-        //     steps {
-        //         echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
-        //         sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
-        //     }
-        // }
-        // or 使用docker maven容器build
-        stage('Build artifact') {
-            agent {
-                docker {
-                    image 'maven:3-jdk-8'
-                    args  '-v /root/dev/maven-repos:/root/.m2'
-                }
-            }
-            steps {
-                echo "[ INFO ] [ Build artifact ] ========== Starting build artifact =========="
-                sh "mvn clean package -Dproject.version= -Dmaven.test.skip=true -U "
             }
         }
 
         stage('Build image') {
-            agent any
             steps {
-                script {
-                    echo "[ INFO ] [ Build image ] ========== start build docker image =========="
-                    try {
-                        sh "docker stop ${SERVICE_NAME}"
-                    } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== containner stopped or not exist ! =========='
-                    }
-                    try {
-                        sh "docker rm ${SERVICE_NAME}"
-                    } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== containner not exist ! =========='
-                    }
-                    try {
-                        sh "docker rmi -f ${SERVICE_IMAGE_NAME}"
-                    } catch (err) {
-                        echo '[ INFO ] [ Deploy ] ========== image not exist ! =========='
-                    }
-                    sh "docker build -f ${DOCKER_FILE_PATH} --build-arg JAR_PATH=${JAR_PATH} -t ${SERVICE_IMAGE_NAME} ."
-                }
+                sh "mvn clean package -U jib:dockerBuild -Dmaven.test.skip=true -Ddocker-image.version=${DOCKER_TAG}"
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy To SIT') {
+            when {
+                expression { return !params.RELEASE }
+            }
             steps {
-                echo '[ INFO ] [ Deploy ] ========== start deploy =========='
-                script{
-
-                    sh "docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
-                        -e JAVA_OPTIONS='${JAVA_OPTIONS}' \
-                        -e SERVICE_NAME=${SERVICE_NAME} \
-                        ${SERVICE_IMAGE_NAME}"
-
-                }
+                  sh "docker run -d --name ${SERVICE_NAME} -p 8080:8080 \
+                                        -e JAVA_OPTIONS='${JAVA_OPTIONS}' \
+                                        -e SERVICE_NAME=${SERVICE_NAME} \
+                                        ${SERVICE_IMAGE_NAME}"
             }
         }
     }
@@ -95,3 +46,4 @@ pipeline {
 // Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock...
 // sudo usermod -a -G docker jenkins
 // sudo service jenkins restart
+// push images: sh "mvn clean package -U jib:build -Dmaven.test.skip=true -DsendCredentialsOverHttp=true -Ddocker-image.version=${DOCKER_TAG}"

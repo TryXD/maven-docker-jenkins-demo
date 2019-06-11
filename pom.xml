@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <docker-image.version>latest</docker-image.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,31 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <container>
+                        <useCurrentTimestamp>true</useCurrentTimestamp>
+                        <jvmFlags>
+                            <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
+                            <jvmFlag>-Duser.timezone=Asia/Shanghai</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                    <from>
+                        <image>openjdk:11-jdk-slim</image>
+                    </from>
+                    <to>
+                        <image>${project.name}:${docker-image.version}</image>
+                        <auth>
+                            <username>admin</username>
+                            <password>yourpassword</password>
+                        </auth>
+                    </to>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
@@ -41,3 +67,13 @@
     </build>
 
 </project>
+
+
+        <!--<image>benchmarkchina.f3322.net:18082/${project.artifactId}:${docker-image.version}</image>-->
+        <!--<to>-->
+        <!--<image>registry.hub.docker.com/tryxd/${project.name}:${docker-image.version}</image>-->
+        <!--<auth>-->
+        <!--<username>tryxd</username>-->
+        <!--<password></password>-->
+        <!--</auth>-->
+        <!--</to>-->
