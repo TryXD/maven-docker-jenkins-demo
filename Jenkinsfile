@@ -25,7 +25,7 @@ pipeline {
 
         stage('Build image') {
             steps {
-                sh "mvn clean package -U jib:dockerBuild -Dmaven.test.skip=true -Ddocker-image.version=${DOCKER_TAG}"
+                sh "mvn clean package -U jib:build -Dmaven.test.skip=true -DsendCredentialsOverHttp=true -Ddocker-image.version=${DOCKER_TAG}"
             }
         }
 
@@ -47,3 +47,4 @@ pipeline {
 // sudo usermod -a -G docker jenkins
 // sudo service jenkins restart
 // push images: sh "mvn clean package -U jib:build -Dmaven.test.skip=true -DsendCredentialsOverHttp=true -Ddocker-image.version=${DOCKER_TAG}"
+// local images: sh "mvn clean package -U jib:dockerBuild -Dmaven.test.skip=true -Ddocker-image.version=${DOCKER_TAG}"
